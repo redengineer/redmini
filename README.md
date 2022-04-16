@@ -2,7 +2,7 @@
 
 ## 介绍
 
-[文档](https://miniapp-open.xiaohongshu.com/docs/guide/miniIntroduce)
+[文档](https://miniapp.xiaohongshu.com/docs/guide/miniIntroduce)
 
 ## 问题反馈与建议
 
