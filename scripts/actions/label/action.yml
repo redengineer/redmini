@@ -1,0 +1,19 @@
+
+name: MINIAPP_ISSUE_LABEL_ACTION
+description: xhs miniapp issue label
+
+author: tailiang
+branding:
+  color: blue
+  icon: package
+inputs:
+  github-token:
+    description: "wechat robot token"
+    required: true
+  ignore-if-labeled:
+    description: "true/false value to indicate ignore it if the issue already has labels"
+    required: false
+
+runs:
+  using: node16
+  main: ./main.js

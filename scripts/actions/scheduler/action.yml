@@ -1,0 +1,24 @@
+
+name: MINIAPP_ISSUE_LABEL_SCHEDULER
+description: xhs miniapp github task scheduler action
+
+author: tailiang
+branding:
+  color: blue
+  icon: package
+inputs:
+  wxRobotHook:
+    description: "wechat robot token"
+    required: true
+
+  tapdNewTask:
+    description: "xhs tapd new task url"
+    required: true
+
+  tapdWorkspaceToken:
+    description: "xhs tapd workspace token"
+    required: true
+
+runs:
+  using: node16
+  main: scripts/main.js
