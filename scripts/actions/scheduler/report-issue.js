@@ -1,7 +1,6 @@
-const superagent = require('superagent');
-const { __wx_robot_hook__ } = require('../config');
-const { 
-  validateIssueFormat, 
+const superagent = require("superagent");
+const { getWxRobotHook } = require("../config");
+const {
   getMentioneList,
   getThirdName,
 } = require("../report-helper");
@@ -14,27 +13,26 @@ const {
  * @params { String } issueType - iOS | Android | Framework
  * @params { Object } restInfo - { [key: string]: unkonwn }
  */
-function getNotfiyContent({
-  title,
-  third_name,
-  issueType,
-  restInfo,
-}) {
+function getNotfiyContent({ title, third_name, issueType, restInfo }) {
   return {
-    "msgtype": "markdown",
-    "mentioned_list": getMentioneList(issueType),
-    "markdown": {
-      "content": `
+    msgtype: "markdown",
+    mentioned_list: getMentioneList(issueType),
+    markdown: {
+      content: `
         ## 🦑 Github Issue Report 👾 \n
         > issue 标题: <font color=\"orange\"> ${title} </font> \n
         > issue 提报服务商: <font color=\"blue\"> ${third_name} </font> \n
         > issue 问题分类: <font color=\"blue\"> ${issueType} </font> \n
-        > issue Assignees: <font color=\"comment\"> ${getMentioneList(issueType)} </font> \n
-        > issue 链接: <font color=\"purple\"> [${restInfo.url}](${restInfo.url}) </font>
-      `
-    }
+        > issue Assignees: <font color=\"comment\"> ${getMentioneList(
+          issueType
+        )} </font> \n
+        > issue 链接: <font color=\"purple\"> [${restInfo.url}](${
+        restInfo.url
+      }) </font>
+      `,
+    },
   };
-};
+}
 
 /**
  * notify wechat group robot
@@ -48,10 +46,9 @@ function getNotfiyContent({
 const notifyWeChat = function (opts) {
   return new Promise((resolve, reject) => {
     superagent
-      .post(__wx_robot_hook__)
+      .post(getWxRobotHook())
       .send(getNotfiyContent(opts))
       .set("Content-Type", "application/json")
-      .set('accept', 'json')
       .end((err, res) => {
         if (err) reject(err);
 
@@ -60,18 +57,13 @@ const notifyWeChat = function (opts) {
   });
 };
 
-const subscriptActions = ["opened", "re-opened"];
-
 module.exports = async function reportIssue(ctx) {
   try {
     if (!("payload" in ctx) || !("issue" in ctx.payload)) {
       throw new Error("no payload found in context");
     }
 
-    const issue = ctx.payload.issue
-
-    subscriptActions.includes(ctx.payload.action) &&
-    await validateIssueFormat(issue)
+    const issue = ctx.payload.issue;
 
     await notifyWeChat({
       title: issue.title,
@@ -82,4 +74,4 @@ module.exports = async function reportIssue(ctx) {
   } catch (e) {
     console.log("### Report Script Error ###", e);
   }
-}
+};

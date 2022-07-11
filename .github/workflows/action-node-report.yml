@@ -16,6 +16,9 @@ jobs:
       - name: miniapp-issue-schduler
         uses: ./scripts/actions/scheduler/
         with:
-          wxRobotHook: ${{ secrets.__wx_robot_hook__ }}
-          tapdNewTask: ${{ secrets.__tapd_new_task__ }}
-          tapdWorkspaceToken: ${{ secrets.__tapd_workspace_token__ }}
+          wx-robot-hook: ${{ secrets.__wx_robot_hook__ }}
+          tapd-new-task: ${{ secrets.__tapd_new_task__ }}
+          tapd-workspace-token: ${{ secrets.__tapd_workspace_token__ }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          close-issue-label: "close"
+          close-issue-comment: "当前的 issue 填写不正确，请参考模板中的必填信息(问题分类、服务商等)。\n\n我们将关闭这个问题，请使用剪贴板中的内容创建一个新的问题。\n\n祝您使用愉快！"

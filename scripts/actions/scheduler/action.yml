@@ -7,18 +7,30 @@ branding:
   color: blue
   icon: package
 inputs:
-  wxRobotHook:
+  wx-robot-hook:
     description: "wechat robot token"
     required: true
 
-  tapdNewTask:
+  tapd-new-task:
     description: "xhs tapd new task url"
     required: true
 
-  tapdWorkspaceToken:
+  tapd-workspace-token:
     description: "xhs tapd workspace token"
+    required: true
+
+  github-token:
+    description: "github token"
+    required: true
+
+  close-issue-label:
+    description: "close issue label"
+    required: false
+  
+  close-issue-comment:
+    description: "close issue comment"
     required: true
 
 runs:
   using: node16
-  main: scripts/main.js
+  main: ./main.js

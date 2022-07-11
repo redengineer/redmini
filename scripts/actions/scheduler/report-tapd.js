@@ -1,6 +1,6 @@
 const superagent = require("superagent");
-const { __tapd_new_task__, __tapd_workspace_token__ } = require("../config");
-const { getTaskList, getThirdName } = require("./report-helper");
+const { getNewTaskPath, getWorkSpaceToken } = require("../config");
+const { getTaskList, getThirdName } = require("../report-helper");
 
 /**
  * @param {*} issue - github issue
@@ -39,11 +39,10 @@ function getTapdTaskParams(issue) {
 function dispatchTapdTask(issue) {
   return new Promise((resolve, reject) => {
     superagent
-      .post(__tapd_new_task__)
+      .post(getNewTaskPath())
       .send(getTapdTaskParams(issue))
-      .set("token", __tapd_workspace_token__)
+      .set("token", getWorkSpaceToken())
       .set("Content-Type", "application/json")
-      .set("accept", "json")
       .end((err, res) => {
         if (err) reject(err);
 

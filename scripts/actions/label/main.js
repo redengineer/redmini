@@ -1,6 +1,7 @@
 const github = require("@actions/github");
 const core = require("@actions/core");
 const { getThirdName } = require("../report-helper");
+const { validateIssueFormat } = require("../issue-validate");
 
 async function main() {
   const githubToken = core.getInput("github-token");
@@ -10,10 +11,16 @@ async function main() {
   const context = github.context;
   const repoName = context.payload.repository.name;
   const ownerName = context.payload.repository.owner.login;
-  const third_name = getThirdName(context.payload.issue.body, [16, 26]);
-  const issueType = getThirdName(context.payload.issue.body, [5, 15]);
+  const issue = context.payload.issue
 
-  let issueNumber = context.payload.issue.number
+  if (!validateIssueFormat(issue)) {
+    return `Invalidate Issue Format ! Ignoring`;
+  }
+
+  const third_name = getThirdName(issue.body, [16, 26]);
+  const issueType = getThirdName(issue.body, [5, 15]);
+
+  let issueNumber = issue.number
 
   if (!issueNumber) {
     throw new Error(`
@@ -37,9 +44,6 @@ async function main() {
 
   // 默认取第一个
   labels.push(third_name?.[0], issueType?.[0])
-
-  console.log('====labels====', labels);
-
 
   await octokit.rest.issues.addLabels({
     owner: ownerName,

@@ -1,21 +1,9 @@
 /**
- * issue validate
- * @internal 
  * 
  * @param { String } body - issue body string  
  */
-exports.validateIssueFormat = function (issue) {
-    // todo validate issue format otherwise close issue
-    return !!issue
-}
-
-/**
- * 
- * @param { String } body - issue body string  
- */
-exports.getThirdName = function (body, range) {
+ exports.getThirdName = function (body, range) {
     try {
-        // console.log('body', body)
         if (!range || !range.length) return 'unknown';
         /**
          * @example
@@ -35,7 +23,7 @@ exports.getThirdName = function (body, range) {
 
         return thirdList
             .filter(l => l.match(/[x]/g))
-            .map(l => l.match(/[\u4e00-\u9fa5]+(\w+)?/g)?.[0] || 'unknown')
+            .map(l => l.match(/[\u4e00-\u9fa5]+(\([\W\w]+\))?/g)[0] || 'unknown')
     } catch (e) {
         return 'unknown'
     }
@@ -61,7 +49,7 @@ const mentioned_map = {
  * task list map
  */
 const task_list_map = {
-    "小程序框架": ["哈笛", "兰飞鸿"],
+    "小程序框架": ["哈笛台亮", "兰飞鸿许天明"],
     "小程序Api": ["哈笛台亮", "兰飞鸿许天明"],
     "小程序基础组件": ["哈笛台亮", "兰飞鸿许天明"],
     "小程序开发者工具(IDE)": ["兰飞鸿许天明", "米波谷亚先"],
@@ -79,9 +67,9 @@ const task_list_map = {
  */
 exports.getTaskList = function (type) {
     try {
-        return task_list_map[type] || ["哈笛", "兰飞鸿"];
+        return task_list_map[type] || ["哈笛台亮", "兰飞鸿许天明"];
     } catch (_) {
-        return ["哈笛", "兰飞鸿"];
+        return ["哈笛台亮", "兰飞鸿许天明"];
     }
 }
 
@@ -91,7 +79,6 @@ exports.getTaskList = function (type) {
  * @internal
  */
 exports.getMentioneList = function (type) {
-    console.log('=== mentioned_map type ===', type);
     try {
         return mentioned_map[type] || ["兰飞鸿", "哈笛"];
     } catch (_) {

@@ -2,22 +2,18 @@ const { schedulerTask } = require("./scheduler");
 
 // main
 async function main() {
-  schedulerTask();
+  return await schedulerTask();
 }
 
 main()
   .then(
-    (result) => {
+    result => {
       console.log(result);
     },
-    (err) => {
+    err => {
       console.log(err);
     }
   )
   .then(() => {
     process.exit();
-  })
-  .catch((error) => {
-    console.error(error);
-    process.exit(1);
   });
