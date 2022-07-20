@@ -1,0 +1,27 @@
+{
+  "name": "redmini",
+  "version": "1.0.0",
+  "description": "小红书小程序反馈",
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/redengineer/redmini.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/redengineer/redmini/issues"
+  },
+  "homepage": "https://github.com/redengineer/redmini#readme",
+  "dependencies": {
+    "jest": "^28.1.2"
+  },
+  "devDependencies": {
+    "@actions/core": "^1.9.0",
+    "@actions/github": "^5.0.3",
+    "@types/jest": "^28.1.4"
+  }
+}

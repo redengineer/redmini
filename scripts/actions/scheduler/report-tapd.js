@@ -1,6 +1,6 @@
 const superagent = require("superagent");
 const { getNewTaskPath, getWorkSpaceToken } = require("../config");
-const { getTaskList, getThirdName } = require("../report-helper");
+const { getTaskList, getMarkDownStats } = require("../report-helper");
 
 /**
  * @param {*} issue - github issue
@@ -8,8 +8,7 @@ const { getTaskList, getThirdName } = require("../report-helper");
  * @link { https://www.tapd.cn/help/show?backup_id=1120003271001000140#target:toc3 }
  */
 function getTapdTaskParams(issue) {
-  const third_name = getThirdName(issue.body, [16, 26]);
-  const issueType = getThirdName(issue.body, [5, 15]);
+  const { issueType, thirdName } = getMarkDownStats(issue.body)
 
   const task_refer = getTaskList(issueType) || [];
 
@@ -24,7 +23,7 @@ function getTapdTaskParams(issue) {
     description: `
         - Github 需求链接: ${issue.html_url}
         <br />
-        - 服务商: ${third_name}
+        - 服务商: ${thirdName}
         <br />
         - issue 创建时间: ${new Date().toLocaleDateString()}
       `,

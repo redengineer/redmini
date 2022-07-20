@@ -1,32 +1,62 @@
+const { matchLabelWithText, matchLabelWithSelector } = require('./issue-validate');
+
 /**
  * 
  * @param { String } body - issue body string  
  */
- exports.getThirdName = function (body, range) {
+ function getSelectedItem(selectors) {
     try {
-        if (!range || !range.length) return 'unknown';
-        /**
-         * @example
-         * 
-         * ```md
-         * 
-         * ## 是否是服务商开发者(服务商必填)[排名不分先后]
-         *  - [x] 微盟
-         *  - [] 有赞
-         * ```
-         */
-        const thirdList = body.split('+')
-            .filter(x => x !==  "\r\n' ")
-            .slice(range[0], range[1]);
-
-        console.log('thirdList', thirdList);
-
-        return thirdList
+        return selectors
             .filter(l => l.match(/[x]/g))
-            .map(l => l.match(/[\u4e00-\u9fa5]+(\([\W\w]+\))?/g)[0] || 'unknown')
+            .map(l => l.match(/[\u4e00-\u9fa5]+(\([\W\w]+\))?/g)?.[0])?.[0] || null
     } catch (e) {
-        return 'unknown'
+        return null
     }
+}
+
+/**
+ * return markdown stats
+ * 
+ * @param { String } markdown 
+ */
+exports.getMarkDownStats = function (md) {
+  const thirdSelectors = matchLabelWithSelector(md, "\\#\\# 服务商名称\\(必填\\[单选\\]\\) - 排名不分先后");
+  const issueSelectors = matchLabelWithSelector(md, "\\#\\# 问题模块\\(必填\\[单选\\]\\)");
+  
+  let appVersion = matchLabelWithText(md, "\\#\\# 使用的小红书APP版本\\(非必填\\)");
+  let libVersion = matchLabelWithText(md, "\\#\\# 使用的小红书APP版本\\(非必填\\)");
+
+  if (!appVersion || (appVersion.trim() === "例如：v7.47.1")) {
+    appVersion === "开发者未填写APP版本"
+  }
+
+  if (!libVersion || (libVersion.trim() === "例如：v3.28.1")) {
+    libVersion === "开发者未填写基础库版本"
+  }
+
+  if (
+    !thirdSelectors
+    || !thirdSelectors.length
+    || !issueSelectors 
+    || !issueSelectors.length
+  ) {
+    return {
+        thirdName: null,
+        issueType: null,
+        libVersion,
+        appVersion
+    }
+  }
+  
+  const thirdName = getSelectedItem(thirdSelectors);
+  const issueType = getSelectedItem(issueSelectors);
+
+  return {
+    thirdName,
+    issueType,
+    libVersion,
+    appVersion
+  }
 }
 
 /**
@@ -97,3 +127,5 @@ exports.step = function (msg) {
 exports.sleep = function (ms = 500) {
     return new Promise((resolve) => setTimeout(resolve, ms))
 }
+
+exports.getSelectedItem = getSelectedItem

@@ -1,6 +1,43 @@
 const github = require("@actions/github");
 const core = require("@actions/core");
-const { getThirdName, step } = require("./report-helper");
+const { step, getSelectedItem } = require("./report-helper");
+
+/**
+ * 获取 label 后面的多选内容
+ * 
+ * @param {*} md 
+ * @param {*} labelMatcher 
+ * @returns 
+ */
+function matchLabelWithSelector(
+  md,
+  labelMatcher
+) {
+  const reg = new RegExp(`(?<=${labelMatcher}(\\s+|\\n+)\\+?)((\\n+?|\\s+?)?-\\s+?\\[[\\s|\\x]?\\]\\s+[\\u4e00-\\u9fa5_a-zA-Z0-9_\\(.\\-\\/\\)].+)+`, 'gm')
+
+  const result = md.match(reg)?.[0]?.split?.('\n')?.filter(Boolean) || null
+
+  return result;
+}
+
+/**
+ * 获取 label 后面的文本内容
+ * 
+ * @param { String } md - markdown 
+ * @param { String (RegExp) } labelMatcher - label regExp
+ * @returns { String || null } 
+ */
+function matchLabelWithText(
+  md,
+  labelMatcher
+) {
+  if (!labelMatcher) return null
+  const reg = new RegExp(`(?<=${labelMatcher})\\n+?.+`, 'gm');
+  const result = 
+    md.match(reg)?.[0]?.split?.('\n')?.filter?.(Boolean)?.[0]?.trim() || null
+    
+  return result
+}
 
 /**
  * close issue
@@ -8,7 +45,7 @@ const { getThirdName, step } = require("./report-helper");
  *
  * @param { String } body - issue body string
  */
-exports.closeIssue = async function (ctx) {
+async function closeIssue (ctx) {
   step(`-> Invalidate Closing`);
   const githubToken = core.getInput("github-token");
   const closeLable =
@@ -48,28 +85,86 @@ exports.closeIssue = async function (ctx) {
  *
  * @param { String } body - issue body string
  */
-exports.validateIssueFormat = function (issue) {
+function validateIssueFormat(issue) {
   step(`-> validating issue body`);
+  if (!issue.title) return false
+  
+  const thirdSelectors = matchLabelWithSelector(issue.body, "\\#\\# 服务商名称\\(必填\\[单选\\]\\) - 排名不分先后");
+  const issueSelectors = matchLabelWithSelector(issue.body, "\\#\\# 问题模块\\(必填\\[单选\\]\\)");
 
-  // todo validate issue format otherwise close issue
-  const third_name = getThirdName(issue.body, [16, 26]);
-  const issueType = getThirdName(issue.body, [5, 15]);
+  step(`-> validating issue got thirdSelectors length: ${thirdSelectors?.length}`);
+  step(`-> validating issue got issueSelectors length: ${issueSelectors?.length}`);
 
-  console.log("=== third_name validate ===", third_name);
-  console.log("=== issueType validate ===", issueType);
+  if (
+    !thirdSelectors
+    || !thirdSelectors.length
+    || !issueSelectors 
+    || !issueSelectors.length
+  ) {
+    return false
+  }
+  
+  const thirdName = getSelectedItem(thirdSelectors);
+  const issueType = getSelectedItem(issueSelectors);
+
+  step(`-> validating issue got thrid name: ${JSON.stringify(thirdName)}`);
+  step(`-> validating issue got issue type: ${JSON.stringify(issueType)}`);
 
   // 基础信息校验
-  if (
-    !issue.title ||
-    third_name === "unknown" ||
-    third_name.length === 0 ||
-    issueType === "unknown" ||
-    issueType.length === 0
-  ) {
+  if (!thirdName || !issueType) {
     step(`-> Invalidate issue !!!!`);
     return false;
   }
 
   step(`-> Invalidate Verify Successfully!`);
   return true;
-};
+}
+
+/**
+ * 校验 markdown 中某个标题下的多选是否符合要求
+ * @internal 
+ * 
+ * @params { String } markdown - 模板
+ * @params { String[Reg] } labelMatcher - 用于匹配的 label 字符
+ * @params { Function } validator - 处理函数
+ * @params { Number } type - 1: 匹配多选, 2: 匹配文本内容
+ */
+function validateLabelWithContent(md, labelMatcher, validator, type = 1) {
+  /**
+   * 
+   * match lebel with muti actions
+   * 
+   * @example
+   * 
+   * input: 
+   *  name = "\\#\\# 节点选择 \\+?"
+   * 
+   * output:
+   *  '- [ ] 节点node-slave-one +',
+   *  '- [ ] 节点node-slave-two +',
+   *  '- [ ] 节点node-slave-three +',
+   *  '- [ ] 节点node-slave-four +',
+   */
+
+  let result = null
+
+  if (type === 1) {
+    result = matchLabelWithSelector(md, labelMatcher)
+  } else {
+    result = matchLabelWithText(md, labelMatcher)
+  }
+
+  if (validator && typeof validator === 'function') {
+    return validator(result)
+  }
+
+  return false
+}
+
+module.exports = {
+  validateLabelWithContent,
+  validateIssueFormat,
+  matchLabelWithSelector,
+  matchLabelWithText,
+  closeIssue,
+}

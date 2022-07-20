@@ -15,7 +15,6 @@ jobs:
       - run: npm i superagent minimist @actions/github @actions/core chalk@4.x
       - name: miniapp-issue-schduler
         uses: ./scripts/actions/scheduler/
-        with:
           wx-robot-hook: ${{ secrets.__wx_robot_hook__ }}
           tapd-new-task: ${{ secrets.__tapd_new_task__ }}
           tapd-workspace-token: ${{ secrets.__tapd_workspace_token__ }}
