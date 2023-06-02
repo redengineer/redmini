@@ -52,7 +52,7 @@ exports.validateIssueFormat = function (issue) {
   step(`-> validating issue body`);
 
   // todo validate issue format otherwise close issue
-  const third_name = getThirdName(issue.body, [16, 26]);
+  const third_name = getThirdName(issue.body, [16, 30]);
   const issueType = getThirdName(issue.body, [5, 15]);
 
   console.log("=== third_name validate ===", third_name);
