@@ -1,6 +1,6 @@
 const github = require("@actions/github");
 const core = require("@actions/core");
-const { getThirdName, step } = require("./report-helper");
+const { getBodyContentInfoByName, step } = require("./report-helper");
 
 /**
  * close issue
@@ -52,19 +52,17 @@ exports.validateIssueFormat = function (issue) {
   step(`-> validating issue body`);
 
   // todo validate issue format otherwise close issue
-  const third_name = getThirdName(issue.body, [16, 30]);
-  const issueType = getThirdName(issue.body, [5, 15]);
+  const third_name = getBodyContentInfoByName(issue.body, '所属的服务商');
+  const problemModules = getBodyContentInfoByName(issue.body, '问题模块');
 
   console.log("=== third_name validate ===", third_name);
-  console.log("=== issueType validate ===", issueType);
+  console.log("=== problemModules validate ===", problemModules);
 
   // 基础信息校验
   if (
     !issue.title ||
-    third_name === "unknown" ||
-    third_name.length === 0 ||
-    issueType === "unknown" ||
-    issueType.length === 0
+    !third_name ||
+    !problemModules
   ) {
     step(`-> Invalidate issue !!!!`);
     return false;

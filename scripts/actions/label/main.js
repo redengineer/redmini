@@ -1,6 +1,6 @@
 const github = require("@actions/github");
 const core = require("@actions/core");
-const { getThirdName } = require("../report-helper");
+const { getBodyContentInfoByName } = require("../report-helper");
 const { validateIssueFormat } = require("../issue-validate");
 
 async function main() {
@@ -17,8 +17,8 @@ async function main() {
     return `Invalidate Issue Format ! Ignoring`;
   }
 
-  const third_name = getThirdName(issue.body, [16, 26]);
-  const issueType = getThirdName(issue.body, [5, 15]);
+  const third_name = getBodyContentInfoByName(issue.body, '所属的服务商');
+  const problemModules = getBodyContentInfoByName(issue.body, '问题模块');
 
   let issueNumber = issue.number
 
@@ -43,7 +43,7 @@ async function main() {
   }
 
   // 默认取第一个
-  labels.push(third_name?.[0], issueType?.[0])
+  labels.push(third_name, problemModules)
 
   await octokit.rest.issues.addLabels({
     owner: ownerName,
