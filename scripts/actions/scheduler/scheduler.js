@@ -1,6 +1,6 @@
 const github = require("@actions/github");
 const issueReport = require('./report-issue');
-const { tapdTask } = require('./report-tapd');
+const { pingcodeTask } = require('./report-tapd');
 const { step } = require("../report-helper");
 const { validateIssueFormat, closeIssue } = require("../issue-validate");
 
@@ -16,7 +16,7 @@ exports.schedulerTask = async function () {
         step(`-> reporting issue `),
         issueReport(github.context),
         step(`-> Ready to dispatch a task`),
-        tapdTask(github.context),
+        pingcodeTask(github.context),
         step(`-> scheduler end`)
     ])
 

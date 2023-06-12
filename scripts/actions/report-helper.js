@@ -2,30 +2,11 @@
  * 
  * @param { String } body - issue body string  
  */
- exports.getThirdName = function (body, range) {
+exports.getBodyContentInfoByName = function (body, name) {
     try {
-        if (!range || !range.length) return 'unknown';
-        /**
-         * @example
-         * 
-         * ```md
-         * 
-         * ## 是否是服务商开发者(服务商必填)[排名不分先后]
-         *  - [x] 微盟
-         *  - [] 有赞
-         * ```
-         */
-        const thirdList = body.split('+')
-            .filter(x => x !==  "\r\n' ")
-            .slice(range[0], range[1]);
-
-        console.log('thirdList', thirdList);
-
-        return thirdList
-            .filter(l => l.match(/[x]/g))
-            .map(l => l.match(/[\u4e00-\u9fa5]+(\([\W\w]+\))?/g)[0] || 'unknown')
+      return body.match(new RegExp(`(?<=##\\s+${name}\\s+?\n?)[^#]+`, 'g'))[0].replace('\'', '').trim()
     } catch (e) {
-        return 'unknown'
+      return null
     }
 }
 
@@ -34,14 +15,13 @@
  */
 const mentioned_map = {
     "小程序框架": ["兰飞鸿", "哈笛"],
-    "小程序Api": ["@兰飞鸿(许天明)", "@哈笛(台亮)"],
-    "小程序基础组件": ["@兰飞鸿(许天明)", "@哈笛(台亮)"],
-    "小程序开发者工具(IDE)": ["@兰飞鸿(许天明)", "@米波(谷亚先)"],
-    "小程序容器(iOS)": ["@月白(李义真)", "@泰坦(万祥)", "@敬城(彭伟男)"],
-    "小程序容器(Android)": ["@太乙(赵映)"],
-    "小程序服务(服务后台)": ["@和泉(居振飞)", "@寸辉(刘志嘉)"],
-    "小程序服务(文档平台)": ["@和泉(居振飞)", "@寸辉(刘志嘉)", "@兰飞鸿(许天明)", "@哈笛(台亮)"],
-    "小程序业务(需求/支付/服务号)": ["@盖聂(周翘楚)", "@郎乔(冯姚洁人)"],
+    "小程序Api": ["兰飞鸿(许天明)", "哈笛(台亮)"],
+    "小程序基础组件": ["兰飞鸿(许天明)", "哈笛(台亮)"],
+    "小程序开发者工具(IDE)": ["寤生(王晨)"],
+    "小程序容器(iOS)": ["敬城(彭伟男)", "大路(余黎明)"],
+    "小程序容器(Android)": ["太乙(赵映)", "断水(邵孟杰)", "小砾(姚朋宾)", "时木(郭钰博)"],
+    "小程序服务(服务后台)": ["和泉(居振飞)"],
+    "小程序服务(文档平台)": ["和泉(居振飞)", "兰飞鸿(许天明)", "哈笛(台亮)"],
 }
 
 
