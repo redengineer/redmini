@@ -26,19 +26,25 @@ module.exports = {
      * pingcode url
      */
     getPingcodeClientId() {
-        return core.getInput('__PINGCODE_CLIENT_ID__')
+        return core.getInput('pingcode-mini-client-id')
     },
     getPingcodeSecret() {
-        return core.getInput('__PINGCODE_MINI_SECRET__')
+        return core.getInput('pingcode-mini-secret')
     },
     getPingcodeIssueRequestUri() {
-        return core.getInput('__PINGCODE_MINI_URL_ISSUE__')
+        return core.getInput('pingcode-mini-url-issue')
     },
     getPingcodeProjectId() {
-        return core.getInput('__PINGCODE_MINI_PROJECT_ID__')
+        return core.getInput('pingcode-mini-project-id')
     },
     getPingcodeAuthUri() {
-        return core.getInput('__PINGCODE_MINI_URL_AUTH__')
-    }
+        return core.getInput('pingcode-mini-url-auth')
+    },
+    /**
+     * feedback uri
+     */
+    getFeedbackCreateUri() {
+        return core.getInput('feedback-mini-url-create')
+    },
 }
 

@@ -45,7 +45,7 @@ function getPingcodeToken() {
           reject(err);
           return;
         }
-        console.log("res.bodyres.body", res)
+        console.log('[pingcode auth request res]: ', res.body)
         resolve(res.body);
       });
   })
@@ -55,17 +55,18 @@ const tokenMap = {
   '兰飞鸿': '3a9aa4aaa783428a969551f112b9477a',
   '大路': '21069756b3ec4465811f34f1b4328992',
   '断水': '070e6e16a2644a48a7fdaf5df0b9f2fd',
-  '盖聂': '280007ebe74948f38567333c1cb5d3ec',
-  "哈笛": '680acd7e43084b2189045fa235f17653',
+  '方宇龙': '280007ebe74948f38567333c1cb5d3ec',
+  '哈笛': '680acd7e43084b2189045fa235f17653',
   '敬城': '2f28aff2324f4096a8f31ffb753ecff8',
   '龙司': 'd304255d432b41b19b6349bfdeb5afde',
   '小陆': 'fe456da08b4244159cff37e1a84cf0ac',
   '时木': '9b57d96044164d9ea9c5c530bcd4fb49',
-  '哈笛': 'c296a9357f66470580838fb5cfaa065e',
+  '太乙': 'c296a9357f66470580838fb5cfaa065e',
   '寤生': '8a2d4b1f095b42bc862c82ac1c577340',
   '小砾': '4d2d7a622b454152bdb6bf02c75cb459',
   '周杨杰': '5d22b9ddef1044f09893fba32e0cf032',
-  '牛顿': 'e1a69f44ec0c4f8cb506502169c5a570'
+  '牛顿': 'e1a69f44ec0c4f8cb506502169c5a570',
+  '和泉': 'c4130d499314418890290fd41d9a89f4'
 }
 
 const getToken = (name) => tokenMap[name]
@@ -73,8 +74,8 @@ const getToken = (name) => tokenMap[name]
 const assigneeMap = {
   "小程序框架": ["哈笛", "兰飞鸿"],
   "小程序Api": ["小陆", "哈笛", "兰飞鸿"],
-  "小程序基础组件": ["龙司", "兰飞鸿"],
-  "小程序开发者工具(IDE)": ["寤生", "兰飞鸿"],
+  "小程序基础组件": ["龙司", "哈笛", "兰飞鸿"],
+  "小程序开发者工具(IDE)": ["寤生", "哈笛", "兰飞鸿"],
   "小程序容器(iOS)": ["敬城", "大路", "兰飞鸿"],
   "小程序容器(Android)": ["太乙", "小砾", "断水", "时木", "兰飞鸿"],
   "小程序服务(服务后台)": ["和泉", "兰飞鸿"],
@@ -82,13 +83,45 @@ const assigneeMap = {
   "小程序业务(需求/支付/服务号)": ["牛顿", "兰飞鸿"],
 }
 
-function getAssigneeId(module) {
+/**
+ * @note
+ *  issue type 
+ */
+const TYPE_ENUM = {
+  FEATURE: 'feature',
+  BUG: 'bug',
+  OPERATOR: 'operator'
+}
+
+function getAssigneeId(issueType, module) {
+  if (issueType === TYPE_ENUM.FEATURE) {
+    return getToken("兰飞鸿")
+  }
+
+  if (issueType === TYPE_ENUM.OPERATOR) {
+    return getToken("牛顿")
+  }
+
   const assigneeName = assigneeMap?.[module]?.[0] || "哈笛"
+
+  console.log('assigneeName ====>', assigneeName)
+
   return getToken(assigneeName)
 }
 
-function getAssigneeIds() {
+function getAssigneeIds(issueType, module) {
+  if (issueType === TYPE_ENUM.FEATURE) {
+    return ["哈笛", "兰飞鸿"].map(getToken)
+  }
+  
+  if (issueType === TYPE_ENUM.OPERATOR) {
+    return ["牛顿", "兰飞鸿"].map(getToken)
+  }
+
   const assignees = assigneeMap?.[module] || ["哈笛", "兰飞鸿"]
+
+  console.log('assignees ====>', assignees)
+
   return assignees.map(getToken)
 }
 
@@ -99,22 +132,22 @@ function getAssigneeIds() {
  */
 function dispatchPingcodeIssue(issue, accessToken) {
   return new Promise((resolve, reject) => {
+    const issueType = getBodyContentInfoByName(issue.body, 'Issue类型')
     const third_name = getBodyContentInfoByName(issue.body, '所属的服务商');
     const problemModules = getBodyContentInfoByName(issue.body, '问题模块');
+
     const data = {
       project_id: getPingcodeProjectId(),
-      title: `[Github Bug Report]: ${issue.title}`,
+      title: `[GITHUB ISSUE BOT]: ${issue.title}`,
       description: `
-- Github 需求链接: ${issue.html_url}
-<br />
-- 问题模块: ${problemModules}
-- 服务商: ${third_name}
-<br />
+- Github 需求链接: ${issue.html_url} \n
+- 问题模块: ${problemModules} \n
+- 服务商: ${third_name} \n
 - issue 创建时间: ${new Date().toLocaleDateString()}
   `,
-      assignee_id: getAssigneeId(),
-      participant_ids: getAssigneeIds(),
-      start_at: Date.now()
+      assignee_id: getAssigneeId(issueType, problemModules),
+      participant_ids: getAssigneeIds(issueType, problemModules),
+      start_at: Math.floor(Date.now() / 1000)
     };
 
     superagent
