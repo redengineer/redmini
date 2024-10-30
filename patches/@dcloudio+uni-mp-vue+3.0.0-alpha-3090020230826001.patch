@@ -1,0 +1,45 @@
+diff --git a/node_modules/@dcloudio/uni-mp-vue/dist/vue.runtime.esm.js b/node_modules/@dcloudio/uni-mp-vue/dist/vue.runtime.esm.js
+index 675cfeedc610be7aca9dbbe57a0d46139e3fc285..381a6a00de4841c5dd0ee2844bbe64ad2ed765cb 100644
+--- a/node_modules/@dcloudio/uni-mp-vue/dist/vue.runtime.esm.js
++++ b/node_modules/@dcloudio/uni-mp-vue/dist/vue.runtime.esm.js
+@@ -4996,7 +4996,7 @@ function setRef$1(instance, isUnmount = false) {
+     if (isUnmount) {
+         return $templateRefs.forEach(templateRef => setTemplateRef(templateRef, null, setupState));
+     }
+-    const check = $mpPlatform === 'mp-baidu' || $mpPlatform === 'mp-toutiao';
++    const check = $mpPlatform === 'mp-baidu' || $mpPlatform === 'mp-toutiao' || $mpPlatform === 'mp-xhs';
+     const doSetByRefs = (refs) => {
+         const mpComponents = 
+         // 字节小程序 selectAllComponents 可能返回 null
+@@ -5670,13 +5670,28 @@ function getCreateApp() {
+ function vOn(value, key) {
+     const instance = getCurrentInstance();
+     const ctx = instance.ctx;
+-    // 微信小程序，QQ小程序，当 setData diff 的时候，若事件不主动同步过去，会导致事件绑定不更新，（question/137217）
+-    const extraKey = typeof key !== 'undefined' &&
++    // // 微信小程序，QQ小程序，当 setData diff 的时候，若事件不主动同步过去，会导致事件绑定不更新，（question/137217）
++    // const extraKey =
++    //   typeof key !== 'undefined' &&
++    //   (ctx.$mpPlatform === 'mp-weixin' || ctx.$mpPlatform === 'mp-qq') &&
++    //   (isString(key) || typeof key === 'number')
++    //     ? '_' + key
++    //     : ''
++    // const name = 'e' + instance.$ei++ + extraKey
++    let extraKey = typeof key !== 'undefined' &&
+         (ctx.$mpPlatform === 'mp-weixin' || ctx.$mpPlatform === 'mp-qq') &&
+         (isString(key) || typeof key === 'number')
+         ? '_' + key
+         : '';
+-    const name = 'e' + instance.$ei++ + extraKey;
++    const needExtraKey = 
++    // @ts-ignore
++    ctx.$mpPlatform === 'mp-xhs' && ctx.$mpType === 'component';
++    const eiCounter = instance.$ei++;
++    if (needExtraKey) {
++        // @ts-ignore
++        extraKey = '_' + ctx.componentId + '_' + eiCounter;
++    }
++    const name = 'e' + eiCounter + extraKey;
+     const mpInstance = ctx.$scope;
+     if (!value) {
+         // remove

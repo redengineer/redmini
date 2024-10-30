@@ -1,11 +1,7 @@
-# 小红书小程序
+# 小红书 uni-app Vue3 hello-uniapp 测试工程
 
-## 介绍
+使用以下二维码体验线上版本
 
-[文档](https://miniapp.xiaohongshu.com/docs/guide/miniIntroduce)
+![uniapp qrcode](./assets/qrcode.png)
 
-## 问题反馈与建议
-
-[给小红书小程序提ISSUE](https://github.com/redengineer/redmini/issues/new/choose)
-
-> 注意: 提交ISSUE时，请选择ISSUE模板，填写模板中的必填内容。对于不符合规范的ISSUE，不予处理。
+- 小程序 appid：649bcf45be816d0051838458
