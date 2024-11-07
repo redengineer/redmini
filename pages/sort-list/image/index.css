@@ -1,0 +1,8 @@
+
+
+.image {
+    border: 1px solid red;
+    /* 元素大小 可能需要在 sjs 中使用 */
+    width: 128rpx;
+    height: 128rpx;
+}

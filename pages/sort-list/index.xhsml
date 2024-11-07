@@ -1,0 +1,27 @@
+<sjs src="./drag.sjs" module="dragModule" />
+
+<!-- scroll-view 作为页面根元素 -->
+<scroll-view class="page-container" scroll-y="{{scrollY}}" bindscroll="bindscroll" bindscrolltoupper="bindscrolltoupper" bindscrolltolower="bindscrolltolower">
+    <!-- 初始化sjs模块 -->
+    <view style="display: none;">
+        <!-- 同步数据 -->
+        {{dragModule.sync(windowWidth, scrollTop, rect, list)}}
+    </view>
+
+    <view style="height: 30vh;">
+        模拟其他元素
+    </view>
+
+    <view class="form-item">
+        <view class="form-label">分类</view>
+        <view class="form-input" xhs:key="{{key}}">
+            <c-image class="c-image" xhs:for="{{list}}" text="{{item.id}}" xhs:key="{{item.id}}" data-id="{{item.id}}"
+                data-index="{{index}}" bind:touchstart="{{dragModule.dragStart}}"
+                bind:touchmove="{{dragModule.dragMove}}" bind:touchend="{{dragModule.dragEnd}}" />
+        </view>
+    </view>
+
+    <view style="height: 100vh;">
+        模拟其他元素
+    </view>  
+</scroll-view>

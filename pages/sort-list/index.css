@@ -1,0 +1,39 @@
+html, body {
+    height: 100vh;
+    width: 100vw;
+    margin: 0;
+    /* 禁止整个页面滚动，防止iOS回弹 */
+    overflow: hidden;
+}
+
+
+.form-item {
+    display: flex;
+    border: 1px solid #ccc;
+    align-items: center;
+}
+
+.form-label {
+    border: 1px solid #ccc;
+}
+
+.form-input {
+    flex: 1;
+    border: 1px solid blue;
+    display: flex;
+    flex-wrap: wrap;
+    /* 盒子容器 相对定位 */
+    position: relative;
+}
+
+.form-input > .c-image {
+    /* 元素边距 可能需要在 sjs 中使用 */
+    margin-right: 16rpx;
+    margin-bottom: 12rpx;
+    position: relative;
+}
+
+.page-container {
+    height: 100vh;
+    width: 100vw;
+}
